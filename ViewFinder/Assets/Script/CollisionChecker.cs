@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//ÇĞ¸îÊÓ×¶ÖĞ5¸÷meshËùÓÃµÄ´¥·¢º¯Êı
+//åˆ‡å‰²è§†é”¥ä¸­5å„meshæ‰€ç”¨çš„è§¦å‘å‡½æ•°
 public class CollisionChecker : MonoBehaviour
 {
 
@@ -15,8 +15,8 @@ public class CollisionChecker : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         if (other.tag == "Cuttable")
-        {//!!£¡ÎÒÃÇÒÔtagÀ´Çø·ÖÊ²Ã´ÊÇ¿ÉÒÔÇĞ¸îµÄ£¬ÓÃlayerÀ´ÅĞ¶¨Ê²Ã´ÊÇ¿É¼û¿É½»»¥µÄ
-            Debug.Log($"{this.gameObject.name} is trigged£¬ aim: {other.name}");
+        {//ä»¥tagæ¥åŒºåˆ†ä»€ä¹ˆæ˜¯å¯ä»¥åˆ‡å‰²çš„ï¼Œç”¨layeræ¥åˆ¤å®šä»€ä¹ˆæ˜¯å¯è§å¯äº¤äº’çš„
+            Debug.Log($"{this.gameObject.name} is triggedï¼Œ aim: {other.name}");
             aim.AddObjectToCut(other.gameObject, side);
         }
     }

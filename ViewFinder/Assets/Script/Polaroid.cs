@@ -21,8 +21,8 @@ public class Polaroid : MonoBehaviour
 
     public bool overridePosition = false;
 
-    //public Action<Boolean> cutHolder;//ÎŞ·¨ĞòÁĞ»¯
-    public UnityEvent<bool> cutHolder;//¿ÉÒÔĞòÁĞ»¯£¬Ê¹ÓÃÆğÀ´Ò²ÎŞÌ«´ó²î±ğ£¨ÖÁÉÙÒ»¸ö²ÎÊı£¬void·µ»Ø£©
+    //public Action<Boolean> cutHolder;//æ— æ³•åºåˆ—åŒ–
+    public UnityEvent<bool> cutHolder;//å¯ä»¥åºåˆ—åŒ–ï¼Œä½¿ç”¨èµ·æ¥ä¹Ÿæ— å¤ªå¤§å·®åˆ«ï¼ˆè‡³å°‘ä¸€ä¸ªå‚æ•°ï¼Œvoidè¿”å›ï¼‰
 
     // Start is called before the first frame update
     void Start()
@@ -40,15 +40,15 @@ public class Polaroid : MonoBehaviour
 
     public void ProduceFilm_Copy()
     {
-        Graphics.CopyTexture(cameraPicture, filmPicture);//¸´ÖÆ»­Ãæµ½½º¾íÖĞ
+        Graphics.CopyTexture(cameraPicture, filmPicture);//å¤åˆ¶ç”»é¢åˆ°èƒ¶å·ä¸­
 
-        filmClone = GameObject.Instantiate(film);//²úÉúÒ»¸ö¸±±¾£¬µ«¶¯»­ÖĞÔËĞĞÖĞµÄÈÔÊÇ±¾Ìå£¬ÎÒÃÇÖ®ºóµ÷ÕûÒ»ÏÂÎ»ÖÃ
+        filmClone = GameObject.Instantiate(film);//äº§ç”Ÿä¸€ä¸ªå‰¯æœ¬ï¼Œä½†åŠ¨ç”»ä¸­è¿è¡Œä¸­çš„ä»æ˜¯æœ¬ä½“ï¼Œæˆ‘ä»¬ä¹‹åè°ƒæ•´ä¸€ä¸‹ä½ç½®
         filmClone.transform.localScale = new Vector3(0.0125f, 1.0f, 0.0125f);
         filmClone.transform.SetParent(filmSpacePoint);
         
     }
 
-    //ÔÚ°´ÏÂ¿ìÃÅ¶¯»­£¨PressTheShutter£©µÄÄ©Î²Ö´ĞĞfilm±¾ÌåÓë¸±±¾½»»»Î»ÖÃ
+    //åœ¨æŒ‰ä¸‹å¿«é—¨åŠ¨ç”»ï¼ˆPressTheShutterï¼‰çš„æœ«å°¾æ‰§è¡Œfilmæœ¬ä½“ä¸å‰¯æœ¬äº¤æ¢ä½ç½®
     public void Film_Switch()
     {
         filmClone.transform.SetPositionAndRotation(film.transform.position, film.transform.rotation);
@@ -66,8 +66,7 @@ public class Polaroid : MonoBehaviour
     }
 
 
-    //ÏÂÃæÎªÒ»ÏµÁĞ°ó¶¨µ½playerinputµÄ»Øµ÷·½·¨
-
+    //ä¸‹é¢ä¸ºä¸€ç³»åˆ—ç»‘å®šåˆ°playerinputçš„å›è°ƒæ–¹æ³•
     public void PressShutter(InputAction.CallbackContext callbackContext)
     {
 
@@ -76,7 +75,7 @@ public class Polaroid : MonoBehaviour
             Debug.Log("produce Film");
             this.GetComponentInParent<PlayController>().isSwitchScene = true;
             polaroidAnimator.SetTrigger("Press");
-            cutHolder?.Invoke(true);//¿ªÊ¼ÇĞ¸î
+            cutHolder?.Invoke(true);//å¼€å§‹åˆ‡å‰²
             this.GetComponentInParent<PlayController>().isSwitchScene = false;
 
         }

@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SearchService;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,57 +9,48 @@ using DG.Tweening;
 using System;
 
 
-//´«ËÍÃÅ£¬¸ºÔğÊÓ¾õĞ§¹ûËùĞèµÄÎÆÀí£¬³¡¾°¼ÓÔØÓë¶ÔÓ¦½»»¥Óë¿É¼ûĞÔµ÷Õû
+//ä¼ é€é—¨ï¼Œè´Ÿè´£è§†è§‰æ•ˆæœæ‰€éœ€çš„çº¹ç†ï¼Œåœºæ™¯åŠ è½½ä¸å¯¹åº”äº¤äº’ä¸å¯è§æ€§è°ƒæ•´
 public class Teleporter : MonoBehaviour
 {
-    public string loadSence;//Òª½»»¥µÄ³¡¾°Ãû³Æ£¬´«ËÍµÄÖÕµã
-    public string unloadSence;//ÒªĞ¶ÔØµÄ³¡¾°Ãû³Æ£¬´«ËÍµÄÆğµã
+    public string loadSence;//è¦äº¤äº’çš„åœºæ™¯åç§°ï¼Œä¼ é€çš„ç»ˆç‚¹
+    public string unloadSence;//è¦å¸è½½çš„åœºæ™¯åç§°ï¼Œä¼ é€çš„èµ·ç‚¹
 
-    public Camera observeCamera;//´«ËÍÃÅµÄ³¡¾°¹Û²âÏà»ú
-    public bool isObserve = true;
-    public Camera playerCamera;//½ÇÉ«Ïà»ú£¬Ö÷ÒªÓÃÓÚ¶¨Î»
+    private Camera observeCamera;//ä¼ é€é—¨çš„åœºæ™¯è§‚æµ‹ç›¸æœº
+    private bool isObserve = true;
+    private Camera playerCamera;//è§’è‰²ç›¸æœºï¼Œç”¨äºå®šä½è§‚æµ‹ç›¸æœº
 
-    public RenderTexture observeTexture;//¹Û²âÎÆÀí
-    public RawImage cameraRT;//´«ËÍÃÅÉÏµÄUI
+    private RenderTexture observeTexture;//é€è§†çº¹ç†
+    public MeshRenderer screen;//é€è§†çª—å£
 
-    public Transform calibrationPoint;//´«ËÍÎ»ÖÃ½ÃÕıµã
-
-
+    public Transform calibrationPoint;//ä¼ é€ä½ç½®çŸ«æ­£ç‚¹ï¼ˆä¼ é€å‰è°ƒæ•´ç©å®¶ä½ç½®ï¼‰
+ 
 
     // Start is called before the first frame update
     void Start()
     {
-        //Òì²½¼ÓÔØ¶ÔÓ¦³¡¾°
+        //å¼‚æ­¥åŠ è½½å¯¹åº”åœºæ™¯
         SceneManager.LoadSceneAsync(loadSence, LoadSceneMode.Additive);
 
         
         observeTexture = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
         observeTexture.Create();
 
-        //Îª¹Û²ìÏà»úÉèÖÃ¿É¼ûĞÔ£¬Êä³öÄ¿±ê£¬Êä³öµ½¸ÃÎÆÀí
+        //ä¸ºè§‚å¯Ÿç›¸æœºè®¾ç½®å¯è§æ€§ï¼Œè¾“å‡ºç›®æ ‡ï¼Œè¾“å‡ºåˆ°è¯¥çº¹ç†
         observeCamera = this.gameObject.GetComponentInChildren<Camera>();
         observeCamera.cullingMask = LayerMask.GetMask(loadSence);
         observeCamera.targetTexture = observeTexture;
 
 
-        //ÎªUIÉèÖÃÊ¹ÓÃµÄÎÆÀí£¬Ê¹ÓÃ¸ÃÎÆÀí£¬ÊµÏÖÊÓ¾õĞ§¹û
-        cameraRT = this.gameObject.GetComponentInChildren<RawImage>();
-        cameraRT.texture = observeTexture;
+        screen.material.SetTexture("_MainTex", observeTexture);
 
 
-        //aimMask = this.transform.Find("Mask");
-
-        //½«´«ËÍÃÅÏà»ú¶¨Î»µ½½ÇÉ«ÉíÉÏ
-        //ÏÈÕÒµ½½ÇÉ«Ïà»ú
+        //å°†è§‚æµ‹ç›¸æœºç»‘å®šåˆ°è§’è‰²ç›¸æœºä¸Š
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
-        //ÉèÖÃ¸¸¶ÔÏó
-        observeCamera.transform.SetParent(playerCamera.transform, false);//µÚ¶ş¸ö²ÎÊıÊÇÊÀ½ç¿Õ¼ä±£³Ö£¬ÕâÑùÉèÖÃ¸¸¶ÔÏóÊ±²»»á¸Ä±äÎïÌåÔÚ¿Õ¼äÖĞµÄ³ÊÏÖĞ§¹û£¬µ«ÎÒÃÇÑ¡ÔñµÄÊ±false
+        observeCamera.transform.SetParent(playerCamera.transform, false);
 
 
-        //´¦Àí³¡¾°
-        //¿É¼ûĞÔ´¦Àí
+        //å¤„ç†åœºæ™¯çš„å¯è§æ€§ä¸å¯äº¤äº’æ€§
         observeCamera.cullingMask = LayerMask.GetMask(loadSence);
-        //¿É½»»¥ĞÔ´¦Àí
         Physics.IgnoreLayerCollision(LayerMask.NameToLayer(loadSence), LayerMask.NameToLayer("Default"), true);
 
     }
@@ -68,35 +59,27 @@ public class Teleporter : MonoBehaviour
     void Update()
     {
 
-        if (isObserve)
-        {
-
-            //µ÷Õû´«ËÍÃÅ¹Û²âÏà»ú³¯Ïò
-            observeCamera.transform.LookAt(cameraRT.transform);
-
-        }
-
     }
 
 
     private void OnDestroy()
     {
-        observeTexture.Release();//ÊÖ¶¯Ïú»Ù×ÊÔ´
-
+        observeTexture.Release();//çº¹ç†èµ„æºéœ€æ‰‹åŠ¨é”€æ¯
     }
 
-
+    //ä¼ é€æ—¶å¯¹ç©å®¶çš„è°ƒæ•´
     public void MovePlayer()
     {
         GameObject player = GameObject.Find("Player");
 
-        player.GetComponent<CharacterController>().enabled = false;//±ØĞë¿ªÕâ¸ö
-        //ÒòÎª¸Ã×é¼şµÄÆ¤·ôÊ¹µÃÊµ¼ÊÅö×²¼ì²â·¶Î§´óÓÚ½ºÄÒ·¶Î§£¬ÔÚÎÒÃÇµ÷Õû½ÇÉ«Î»ÖÃºó¿ÉÄÜÒòÎªÆ¤·ôÅö×²±»µ¯»ØÔ­Î»ÖÃ
+        player.GetComponent<CharacterController>().enabled = false;//åœ¨è°ƒæ•´ç©å®¶ä½ç½®æ—¶å¿…é¡»å…³é—­è§’è‰²ç¢°æ’
+        //å› ä¸ºè¯¥ç»„ä»¶çš„çš®è‚¤ä½¿å¾—å®é™…ç¢°æ’æ£€æµ‹èŒƒå›´å¤§äºèƒ¶å›ŠèŒƒå›´ï¼Œåœ¨æˆ‘ä»¬è°ƒæ•´è§’è‰²ä½ç½®åå¯èƒ½å› ä¸ºçš®è‚¤ç¢°æ’è¢«å¼¹å›åŸä½ç½®
 
         Vector3 end = new(calibrationPoint.position.x, 1.0f, calibrationPoint.position.z);
         player.transform.DOMove(end, 2.0f);
         player.transform.DODynamicLookAt(end - Vector3.up * 0.5f, 2.0f, AxisConstraint.Y);
-        playerCamera.transform.DODynamicLookAt(cameraRT.transform.position, 2.0f, AxisConstraint.Y)
+
+        playerCamera.transform.DODynamicLookAt(screen.transform.position, 2.0f, AxisConstraint.Y)
             .OnComplete(SceneSwitch);
 
 
@@ -105,35 +88,30 @@ public class Teleporter : MonoBehaviour
 
             isObserve = false;
 
-            Canvas canvas = this.GetComponentInChildren<Canvas>();
-            //canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.renderMode = RenderMode.WorldSpace;
-            canvas.worldCamera = playerCamera;//È·±£ÕıÈ·µÄ¹Û²âÏà»ú
-
-            RectTransform maskRectTransform = this.GetComponentInChildren<Mask>().rectTransform;
-            maskRectTransform.DOSizeDelta(new(3000f, 3000f), 2.0f)
+            screen.transform.DOScale(new Vector3(10, 10, 1), 2.0f)
                 .OnComplete(() => { StartCoroutine(Switch()); });
 
-
-            //½»»¥Óë¿É¼ûĞÔÉèÖÃ
+            //äº¤äº’ä¸å¯è§æ€§è®¾ç½®
             IEnumerator Switch()
             {
-                //¿É½»»¥ĞÔ
+                //å¯äº¤äº’æ€§
                 Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Default"), LayerMask.NameToLayer(unloadSence), true);
                 Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Default"), LayerMask.NameToLayer(loadSence), false);
 
-                //¿É¼ûĞÔ
+                //å¯è§æ€§
                 playerCamera.cullingMask = LayerMask.GetMask(loadSence, "Default", "UI");
 
 
                 player.GetComponent<CharacterController>().enabled = true;
                 player.GetComponent<PlayController>().CurrentScene = loadSence;
-                maskRectTransform.sizeDelta = Vector2.zero;
+                screen.transform.localScale = Vector3.zero;
                 player.GetComponent<PlayController>().isSwitchScene = false;
 
-                //Ğ¶ÔØ³¡¾°
-                yield return SceneManager.UnloadSceneAsync(unloadSence);
+                observeCamera.transform.SetParent(null);
+                SceneManager.MoveGameObjectToScene(observeCamera.gameObject, SceneManager.GetSceneByName(unloadSence));
 
+                //å¸è½½åœºæ™¯
+                yield return SceneManager.UnloadSceneAsync(unloadSence);
 
             }
         }

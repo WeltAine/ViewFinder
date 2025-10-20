@@ -20,7 +20,7 @@ public class PlayController : MonoBehaviour
     public float mouseXSensitivity = 5.0f;
     public float mouseYSensitivity = 5.0f;
 
-    public float gravity = -9.81f;//ÖØÁ¦
+    public float gravity = -9.81f;//é‡åŠ›
     public float jumpHight = 0.8f;
 
     public CharacterController characterController;
@@ -41,13 +41,13 @@ public class PlayController : MonoBehaviour
 
         if (!isSwitchScene)
         {
-            //»ñÈ¡ÊäÈë£¬²¢¿ØÖÆÍæ¼Ò
+            //è·å–è¾“å…¥ï¼Œå¹¶æ§åˆ¶ç©å®¶
 
-            //Íæ¼ÒÎ»ÒÆ
+            //ç©å®¶ä½ç§»
             playerMove.x = Input.GetAxis("Horizontal") * speed;
             playerMove.z = Input.GetAxis("Vertical") * speed;
 
-
+            //ç©ºæ ¼è·³è·ƒ
             if (Input.GetKeyDown(KeyCode.Space) && characterController.isGrounded)
             {
                 playerMove.y = Mathf.Sqrt(-2.0f * jumpHight * gravity);
@@ -55,43 +55,36 @@ public class PlayController : MonoBehaviour
 
 
 
-            //Êó±êÒÆ¶¯£¬¸Ä±äÍæ¼ÒÊÓÒ°
+            //é¼ æ ‡ç§»åŠ¨ï¼Œæ”¹å˜ç©å®¶è§†é‡
             playerLook.x = Input.GetAxis("Mouse X");
             playerLook.y = Input.GetAxis("Mouse Y");
-            //¸Ä±ätransform£¨×ªÉí£©ºÍÏà»ú³¯Ïò£¨Ì§Í·£©
-            playerCamera.transform.Rotate(-playerLook.y * Vector3.right * mouseYSensitivity, Space.Self);//Ïà»úÖ»¶ÔYÓĞ·´Ó¦
-            this.transform.Rotate(playerLook.x * Vector3.up * mouseXSensitivity, Space.Self);//ÉíÌåÖ»¶ÔXÓĞ·´Ó¦
+            //æ”¹å˜transformï¼ˆè½¬èº«ï¼‰å’Œç›¸æœºæœå‘ï¼ˆæŠ¬å¤´ï¼‰
+            playerCamera.transform.Rotate(-playerLook.y * Vector3.right * mouseYSensitivity, Space.Self);//é¼ æ ‡ä¸Šä¸‹æ”¹å˜ç›¸æœºæœå‘
+            this.transform.Rotate(playerLook.x * Vector3.up * mouseXSensitivity, Space.Self);//é¼ æ ‡å·¦å³æ”¹å˜èº«ä½“æœå‘
 
 
 
-            //¶Ô×Å´«ËÍÆ÷°´ÏÂM¼ü
-            if (Input.GetKeyDown(KeyCode.M))
+            //å¯¹ç€ä¼ é€å™¨æŒ‰ä¸‹Té”®
+            if (Input.GetKeyDown(KeyCode.T))
             {
                 Ray cast = Camera.main.ScreenPointToRay(new(Screen.width / 2.0f, Screen.height / 2.0f));
                 RaycastHit hit;
                 Physics.Raycast(cast, out hit, 2.0f, LayerMask.GetMask(CurrentScene));
 
 
-
                 if (hit.transform.tag == "Teleporter")
                 {
-                    this.isSwitchScene = true;//½ûÖ¹ÏìÓ¦Íæ¼Ò²Ù¿Ø
+                    this.isSwitchScene = true;//ç¦æ­¢å“åº”ç©å®¶æ“æ§
                     hit.transform.GetComponent<Teleporter>().MovePlayer();
 
                 }
             }
-
-
-            //Ïà»ú¿ØÖÆ£¨²»Ğ´ÔÚÕâÀï£¬Ğ´ÔÚpolaroidÖĞ£©
-
-
         }
     }
 
 
     private void FixedUpdate()
     {
-
         playerMove.y += Time.fixedDeltaTime * gravity;
 
         Vector3 direction = this.transform.right * playerMove.x + this.transform.forward * playerMove.z + playerMove.y * Vector3.up ;
@@ -100,9 +93,6 @@ public class PlayController : MonoBehaviour
         {
             characterController.Move(direction * Time.fixedDeltaTime);
         }
-
-
-
     }
 
 

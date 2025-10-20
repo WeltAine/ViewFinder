@@ -9,31 +9,31 @@ public class CutFrustum : MonoBehaviour
 {
 
     public float customOffset = 0.1f;
-    public Camera captureCamera;//½ØÈ¡ËùÓÃÊÓµã
+    public Camera captureCamera;//æˆªå–æ‰€ç”¨è§†ç‚¹
     public Transform filmSpacePoint;
-    public float frustumAspect = 1;//¿í¸ß±È
-    private Vector3 capturePoint, leftUp, leftDown, rightUp, rightDown;//ÊÓ×¶µÄ5¸ö¶¥µã
+    public float frustumAspect = 1;//å®½é«˜æ¯”
+    private Vector3 capturePoint, leftUp, leftDown, rightUp, rightDown;//è§†é”¥çš„5ä¸ªé¡¶ç‚¹
 
-    private GameObject left, right, top, bottom, frustum;//×Ô´øMF£¬MC£¬MR
-    private Plane leftPlane, rightPlane, topPlane, bottomPlane;//planeÖ»ÊÇÒ»¸ö¼¸ºÎ¸ÅÄîµÄapi£¬Ã»ÓĞÍø¸ñÊ²Ã´µÄ
-    private MeshFilter leftPlaneMF, rightPlaneMF, topPlaneMF, bottomPlaneMF, frustumExistMF;//Ã¿¸öGOµÄMF
-    private MeshCollider leftPlaneMC, rightPlaneMC, topPlaneMC, bottomPlaneMC, frustumExistMC;//Ã¿¸öGOMC
-
-
-    private List<GameObject> leftCutList, rightCutList, topCutList, bottomCutList, frustumExistList;//´¢´æĞèÒª±»ÇĞ¸îÎïÌå
+    private GameObject left, right, top, bottom, frustum;//è‡ªå¸¦MFï¼ŒMCï¼ŒMR
+    private Plane leftPlane, rightPlane, topPlane, bottomPlane;//planeåªæ˜¯ä¸€ä¸ªå‡ ä½•æ¦‚å¿µçš„apiï¼Œæ²¡æœ‰ç½‘æ ¼ä»€ä¹ˆçš„
+    private MeshFilter leftPlaneMF, rightPlaneMF, topPlaneMF, bottomPlaneMF, frustumExistMF;//æ¯ä¸ªGOçš„MF
+    private MeshCollider leftPlaneMC, rightPlaneMC, topPlaneMC, bottomPlaneMC, frustumExistMC;//æ¯ä¸ªGOMC
 
 
-    PolaroidFilm activeFilm;//½ºÆ¬¿Õ¼ä
+    private List<GameObject> leftCutList, rightCutList, topCutList, bottomCutList, frustumExistList;//å‚¨å­˜éœ€è¦è¢«åˆ‡å‰²ç‰©ä½“
+
+
+    PolaroidFilm activeFilm;//èƒ¶ç‰‡ç©ºé—´
 
 
 
-    //³õÊ¼»¯£¬Éú³ÉGO£¬²¢½«MF£¬MC°ó¶¨µ½ÆäÉÏ£»MCÉèÖÃÎª´¥·¢Æ÷£¬²¢¹Ø±ÕÅö×²¼ì²â£¬MR¹Ø±Õ
+    //åˆå§‹åŒ–ï¼Œç”ŸæˆGOï¼Œå¹¶å°†MFï¼ŒMCç»‘å®šåˆ°å…¶ä¸Šï¼›MCè®¾ç½®ä¸ºè§¦å‘å™¨ï¼Œå¹¶å…³é—­ç¢°æ’æ£€æµ‹ï¼ŒMRå…³é—­
     void Start()
     {
-        frustumAspect = captureCamera.aspect;//ÉèÖÃ¿í¸ß±È
+        frustumAspect = captureCamera.aspect;//è®¾ç½®å®½é«˜æ¯”
         capturePoint = captureCamera.transform.position;
 
-        //ÇĞ¸îËùÓÃ¼¸ºÎÉèÖÃ
+        //åˆ‡å‰²æ‰€ç”¨å‡ ä½•è®¾ç½®
         left = GameObject.CreatePrimitive(PrimitiveType.Plane);
         left.name = "leftZone";
         var leftCC = left.AddComponent<CollisionChecker>();
@@ -97,7 +97,7 @@ public class CutFrustum : MonoBehaviour
 
 
 
-        //ÇĞ¸îÁĞ±í×¼±¸
+        //åˆ‡å‰²åˆ—è¡¨å‡†å¤‡
         leftCutList = new List<GameObject>();
         rightCutList = new List<GameObject>();
         topCutList = new List<GameObject>();
@@ -113,30 +113,30 @@ public class CutFrustum : MonoBehaviour
         
     }
 
-    //Éú³ÉÇĞ¸îËùÓÃµÄËÄ¸öÃæ£¨ËüÃÇ·ûºÏÊÀ½ç¿Õ¼ä£©£¬²¢¿ªÆôÅö×²¼ì²â£¬Ğ­³Ì¿ªÆôÇĞ¸î
+    //ç”Ÿæˆåˆ‡å‰²æ‰€ç”¨çš„å››ä¸ªé¢ï¼ˆå®ƒä»¬ç¬¦åˆä¸–ç•Œç©ºé—´ï¼‰ï¼Œå¹¶å¼€å¯ç¢°æ’æ£€æµ‹ï¼Œåç¨‹å¼€å¯åˆ‡å‰²
     public void GenericFrustumAndCut(bool isPress)
     {
         
-        //Éú³ÉÇĞ¸î×¶ÌåµÄ5¸ö¶¥µã(local¿Õ¼ä)
+        //ç”Ÿæˆåˆ‡å‰²é”¥ä½“çš„5ä¸ªé¡¶ç‚¹(localç©ºé—´)
         float _helfHeight = (captureCamera.farClipPlane * Mathf.Tan(captureCamera.fieldOfView * 0.5f * Mathf.Deg2Rad));
         float _helfWidth = _helfHeight * frustumAspect;
 
-        capturePoint = captureCamera.transform.position;//×¶Ìå¶¥µã
-        //×¶Ìåµ×ÃæµÄËÄ¸ö¶¥µã
+        capturePoint = captureCamera.transform.position;//é”¥ä½“é¡¶ç‚¹
+        //é”¥ä½“åº•é¢çš„å››ä¸ªé¡¶ç‚¹
         leftUp = new(-_helfWidth, _helfHeight, captureCamera.farClipPlane);
         leftDown = new(-_helfWidth, -_helfHeight, captureCamera.farClipPlane);
         rightUp = new(_helfWidth, _helfHeight, captureCamera.farClipPlane);
         rightDown = new(_helfWidth, -_helfHeight, captureCamera.farClipPlane);
 
 
-        //local¿Õ¼ä×ª»»Îªworld¿Õ¼ä
+        //localç©ºé—´è½¬æ¢ä¸ºworldç©ºé—´
         leftUp = captureCamera.transform.TransformPoint(leftUp);
         leftDown = captureCamera.transform.TransformPoint(leftDown);
         rightUp = captureCamera.transform.TransformPoint(rightUp);
         rightDown = captureCamera.transform.TransformPoint(rightDown);
 
 
-        //Éú³ÉPlaneÎªÇĞ¸î´¥·¢Çø×ö×¼±¸
+        //ç”ŸæˆPlaneä¸ºåˆ‡å‰²è§¦å‘åŒºåšå‡†å¤‡
         leftPlane = new Plane(capturePoint, leftUp, leftDown);
         rightPlane = new Plane(capturePoint, rightDown, rightUp);
         topPlane = new Plane(capturePoint, rightUp, leftUp);
@@ -144,7 +144,7 @@ public class CutFrustum : MonoBehaviour
 
 
 
-        //´´½¨Íø¸ñ£¬²¢ÉèÖÃÎªGOÍø¸ñ£¨Ê¹ÓÃmeshµÄsetÊôĞÔÒ²»áµ¼ÖÂÖ¸Ïòsharedmesh³ÉÎªmeshµÄÒıÓÃ£¨Ò»Ğ©ÌØÊâÇé¿öÏÂ²»»á£©£©
+        //åˆ›å»ºç½‘æ ¼ï¼Œå¹¶è®¾ç½®ä¸ºGOç½‘æ ¼ï¼ˆä½¿ç”¨meshçš„setå±æ€§ä¹Ÿä¼šå¯¼è‡´æŒ‡å‘sharedmeshæˆä¸ºmeshçš„å¼•ç”¨ï¼ˆä¸€äº›ç‰¹æ®Šæƒ…å†µä¸‹ä¸ä¼šï¼‰ï¼‰
         Vector3 leftOffset = -1 * leftPlane.normal * customOffset;
         leftPlaneMF.mesh = GenericCustomBoxCollider(capturePoint + leftOffset, leftDown + leftOffset, ((leftDown + leftUp) / 2) + leftOffset, leftUp + leftOffset,
                                                capturePoint, leftDown, (leftDown + leftUp) / 2, leftUp);
@@ -161,14 +161,14 @@ public class CutFrustum : MonoBehaviour
         bottomPlaneMF.mesh = GenericCustomBoxCollider(capturePoint + bottomOffset, rightDown + bottomOffset, ((rightDown + leftDown) / 2) + bottomOffset, leftDown + bottomOffset,
                                                capturePoint, rightDown, (rightDown + leftDown) / 2, leftDown);
 
-        //µ±Ê¹ÓÃtriggerEntryÊ±Òª´øÉÏÒ»Ğ©Æ«ÒÆ£¬ÒÔÃâÌùºÏ×Å´¥·¢ÇøÓòµÄÎïÌå²úÉú´¥·¢
+        //å½“ä½¿ç”¨triggerEntryæ—¶è¦å¸¦ä¸Šä¸€äº›åç§»ï¼Œä»¥å…è´´åˆç€è§¦å‘åŒºåŸŸçš„ç‰©ä½“äº§ç”Ÿè§¦å‘
         Vector3 farCenter = capturePoint + captureCamera.transform.forward * captureCamera.farClipPlane;
         frustumExistMF.mesh = GenericCustomFrustumCollider(capturePoint + (captureCamera.transform.forward * 0.1f), leftUp + ((farCenter - leftUp).normalized * 5.0f), leftDown + ((farCenter - leftDown).normalized * 5.0f), rightUp + ((farCenter - rightUp).normalized * 5.0f), rightDown + ((farCenter - rightDown).normalized * 5.0f));
 
 
 
 
-        //ÉèÖÃGOµÄÍø¸ñÅö×²Ìå
+        //è®¾ç½®GOçš„ç½‘æ ¼ç¢°æ’ä½“
         leftPlaneMC.sharedMesh = leftPlaneMF.mesh;
         rightPlaneMC.sharedMesh = rightPlaneMF.mesh;
         topPlaneMC.sharedMesh = topPlaneMF.mesh;
@@ -182,7 +182,7 @@ public class CutFrustum : MonoBehaviour
         bottomCutList.Clear();
         frustumExistList.Clear();
 
-        //ÆôÓÃ´¥·¢Åö×²
+        //å¯ç”¨è§¦å‘ç¢°æ’
         leftPlaneMC.enabled = true;
         rightPlaneMC.enabled = true;
         topPlaneMC.enabled = true;
@@ -197,7 +197,7 @@ public class CutFrustum : MonoBehaviour
 
 
 
-    //Ìí¼Óµ½´¦Àí¶ÓÁĞ£¨»ùÓÚside²ÎÊı£©
+    //æ·»åŠ åˆ°å¤„ç†é˜Ÿåˆ—ï¼ˆåŸºäºsideå‚æ•°ï¼‰
     public void AddObjectToCut(GameObject aim, int side)
     {
         switch (side)
@@ -237,25 +237,25 @@ public class CutFrustum : MonoBehaviour
     }
 
 
-    //¿ªÊ¼ÇĞ¸î
+    //å¼€å§‹åˆ‡å‰²
     private IEnumerator CutAimList(bool isPress)
     {
 
-        //ÀûÓÃĞ­³Ì£¨±¾ÖÊÉÏÊÇÒ»ÖÖÒì²½£©À´ÊµÏÖµÈ´ıÈıÖ¡µÄĞ§¹û£¬±£Ö¤Íê³É¼ì²â
+        //åˆ©ç”¨åç¨‹ï¼ˆæœ¬è´¨ä¸Šæ˜¯ä¸€ç§å¼‚æ­¥ï¼‰æ¥å®ç°ç­‰å¾…ä¸‰å¸§çš„æ•ˆæœï¼Œä¿è¯å®Œæˆæ£€æµ‹
         yield return null;
         yield return null;
         yield return null;
 
 
-        //¼°Ê±¹Ø±Õ¼ì²â£¬±ÜÃâÖ®ºó¼ÌĞø¶Ô²úÉúµÄÇĞ¸î¿éÔÙ²úÉúÅö×²
+        //åŠæ—¶å…³é—­æ£€æµ‹ï¼Œé¿å…ä¹‹åç»§ç»­å¯¹äº§ç”Ÿçš„åˆ‡å‰²å—å†äº§ç”Ÿç¢°æ’
         leftPlaneMC.enabled = false;
         rightPlaneMC.enabled = false;
         topPlaneMC.enabled = false;
         bottomPlaneMC.enabled = false;
 
 
-        List<GameObject> completeObjects = new List<GameObject>();//ÍêÕûµÄ±¾Ìå¸±±¾
-        List<GameObject> allChunks = new List<GameObject>();//ÇĞ¸î¹ı³ÌÖĞ²úÉúµÄËùÓĞ¿é
+        List<GameObject> completeObjects = new List<GameObject>();//å®Œæ•´çš„æœ¬ä½“å‰¯æœ¬
+        List<GameObject> allChunks = new List<GameObject>();//åˆ‡å‰²è¿‡ç¨‹ä¸­äº§ç”Ÿçš„æ‰€æœ‰å—
 
         foreach (var aim in leftCutList)
         {
@@ -270,7 +270,7 @@ public class CutFrustum : MonoBehaviour
                 GameObject original = GameObject.Instantiate(aim, aim.transform.parent);
                 aim.name = aim.name + "/cut";
                 original.name = initialName;
-                original.SetActive(false);//¹Ø±Õ¸±±¾£¬±ÜÃâÖ®ºó±»ÊÓ×¶¼ì²â
+                original.SetActive(false);//å…³é—­å‰¯æœ¬ï¼Œé¿å…ä¹‹åè¢«è§†é”¥æ£€æµ‹
                 completeObjects.Add(original);
             }
 
@@ -287,7 +287,7 @@ public class CutFrustum : MonoBehaviour
             }
 
 
-            GameObject newChunk = Cutter.Cut(aim, leftPlane.ClosestPointOnPlane(Vector3.zero), leftPlane.normal);//aim»áÓë·¨Ïß·½ÏòÏà·´
+            GameObject newChunk = Cutter.Cut(aim, leftPlane.ClosestPointOnPlane(Vector3.zero), leftPlane.normal);//aimä¼šä¸æ³•çº¿æ–¹å‘ç›¸å
 
             newChunk.transform.SetParent(aim.transform.parent);
             cutPiece.Add(newChunk);
@@ -301,14 +301,14 @@ public class CutFrustum : MonoBehaviour
 
             if (isPress)
             {
-                if (aim.name.Split("/").Length == 1)//Èç¹ûÒÑ¾­¾­Àú¹ıÇĞ¸î£¬ÔòÎŞĞè×¼±¸ÍêÕûµÄ±¾Ìå¸±±¾
+                if (aim.name.Split("/").Length == 1)//å¦‚æœå·²ç»ç»å†è¿‡åˆ‡å‰²ï¼Œåˆ™æ— éœ€å‡†å¤‡å®Œæ•´çš„æœ¬ä½“å‰¯æœ¬
                 {
                     string initialName = aim.name;
                     //GameObject original = GameObject.Instantiate(aim);
                     GameObject original = GameObject.Instantiate(aim, aim.transform.parent);
                     aim.name = aim.name + "/cut";
                     original.name = initialName;
-                    original.SetActive(false);//¹Ø±Õ¸±±¾
+                    original.SetActive(false);//å…³é—­å‰¯æœ¬
                     completeObjects.Add(original);
                     
                 }
@@ -350,14 +350,14 @@ public class CutFrustum : MonoBehaviour
 
             if (isPress)
             {
-                if (aim.name.Split("/").Length == 1)//Èç¹ûÒÑ¾­¾­Àú¹ıÇĞ¸î£¬ÔòÎŞĞè×¼±¸ÍêÕûµÄ±¾Ìå¸±±¾
+                if (aim.name.Split("/").Length == 1)//å¦‚æœå·²ç»ç»å†è¿‡åˆ‡å‰²ï¼Œåˆ™æ— éœ€å‡†å¤‡å®Œæ•´çš„æœ¬ä½“å‰¯æœ¬
                 {
                     string initialName = aim.name;
                     //GameObject original = GameObject.Instantiate(aim);
                     GameObject original = GameObject.Instantiate(aim, aim.transform.parent);
                     aim.name = aim.name + "/cut";
                     original.name = initialName;
-                    original.SetActive(false);//¹Ø±Õ¸±±¾
+                    original.SetActive(false);//å…³é—­å‰¯æœ¬
                     completeObjects.Add(original);
                 }
             }
@@ -397,14 +397,14 @@ public class CutFrustum : MonoBehaviour
         {
             if (isPress)
             {
-                if (aim.name.Split("/").Length == 1)//Èç¹ûÒÑ¾­¾­Àú¹ıÇĞ¸î£¬ÔòÎŞĞè×¼±¸ÍêÕûµÄ±¾Ìå¸±±¾
+                if (aim.name.Split("/").Length == 1)//å¦‚æœå·²ç»ç»å†è¿‡åˆ‡å‰²ï¼Œåˆ™æ— éœ€å‡†å¤‡å®Œæ•´çš„æœ¬ä½“å‰¯æœ¬
                 {
                     string initialName = aim.name;
                     //GameObject original = GameObject.Instantiate(aim);
                     GameObject original = GameObject.Instantiate(aim, aim.transform.parent);
                     aim.name = aim.name + "/cut";
                     original.name = initialName;
-                    original.SetActive(false);//¹Ø±Õ¸±±¾
+                    original.SetActive(false);//å…³é—­å‰¯æœ¬
                     completeObjects.Add(original);
                 }
             }
@@ -440,7 +440,7 @@ public class CutFrustum : MonoBehaviour
         }
 
 
-        //¹Ø±Õ´¥·¢Åö×²
+        //å…³é—­è§¦å‘ç¢°æ’
         leftPlaneMC.enabled = false;
         rightPlaneMC.enabled = false;
         topPlaneMC.enabled = false;
@@ -448,7 +448,7 @@ public class CutFrustum : MonoBehaviour
 
 
         frustumExistMC.enabled = true;
-        //µÈ´ı¼ì²â
+        //ç­‰å¾…æ£€æµ‹
         yield return null;
         yield return null;
         yield return null;
@@ -459,7 +459,7 @@ public class CutFrustum : MonoBehaviour
 
         if (isPress)
         {
-            //Ê¹ÓÃÏà»úÊ±£¬Ëé¿éÉ¾³ı£¬ÍêÕû¸±±¾±£Áô
+            //ä½¿ç”¨ç›¸æœºæ—¶ï¼Œç¢å—åˆ é™¤ï¼Œå®Œæ•´å‰¯æœ¬ä¿ç•™
             activeFilm = new PolaroidFilm(frustumExistList, filmSpacePoint, this.GetComponent<PlayController>().currentSceneRef);
 
             foreach (var aim in completeObjects)
@@ -469,13 +469,13 @@ public class CutFrustum : MonoBehaviour
 
             foreach (var aim in allChunks)
             {
-                Debug.Log($"É¾³ı¿é£º{aim.name}");
+                Debug.Log($"åˆ é™¤å—ï¼š{aim.name}");
                 Destroy(aim);
             }
         }
         else
         {
-            //Ê¹ÓÃÕÕÆ¬Ê±£¬ÊÓ×¶ÄÚËé¿éÉ¾³ı£¬ÍêÕû¸±±¾É¾³ı
+            //ä½¿ç”¨ç…§ç‰‡æ—¶ï¼Œè§†é”¥å†…ç¢å—åˆ é™¤ï¼Œå®Œæ•´å‰¯æœ¬åˆ é™¤
             int count = allChunks.Count;
             for (int i = 0; i < count; i++)
             {
@@ -486,14 +486,14 @@ public class CutFrustum : MonoBehaviour
 
             foreach (var aim in frustumExistList)
             {
-                Debug.Log($"Ê§È¥ÊÓ×¶ÄÚÎïÌå£º{aim.name}");
+                Debug.Log($"å¤±å»è§†é”¥å†…ç‰©ä½“ï¼š{aim.name}");
                 Destroy(aim);
             }
 
 
             foreach (var aim in completeObjects)
             {
-                Debug.Log($"Ê§È¥ÍêÕû¸±±¾ÎïÌå£º{aim.name}");
+                Debug.Log($"å¤±å»å®Œæ•´å‰¯æœ¬ç‰©ä½“ï¼š{aim.name}");
 
                 Destroy(aim);
             }
@@ -506,7 +506,7 @@ public class CutFrustum : MonoBehaviour
 
 
 
-    //Éú³ÉÍø¸ñ
+    //ç”Ÿæˆç½‘æ ¼
     public Mesh GenericCustomBoxCollider(params Vector3[] vertexs)
     {
         Mesh customBox = new Mesh();
@@ -528,7 +528,7 @@ public class CutFrustum : MonoBehaviour
         return customBox;
     }
 
-    public Mesh GenericCustomFrustumCollider(params Vector3[] vertexs)//ÖĞ£¬×óÉÏ£¬×óÏÂ£¬ÓÒÉÏ£¬ÓÒÏÂ
+    public Mesh GenericCustomFrustumCollider(params Vector3[] vertexs)//ä¸­ï¼Œå·¦ä¸Šï¼Œå·¦ä¸‹ï¼Œå³ä¸Šï¼Œå³ä¸‹
     {
         Mesh customFrustum = new Mesh();
         customFrustum.vertices = vertexs;
@@ -555,13 +555,11 @@ public class CutFrustum : MonoBehaviour
         //Gizmos.DrawLine(leftUp, rightUp);
         //Gizmos.DrawLine(leftUp, leftDown);
         //Gizmos.DrawLine(rightUp, rightDown);
-
     }
 
 
     private void OnDrawGizmos()
     {
-
         //Gizmos.color = Color.yellow;
         //Vector3 leftOffset = -1 * leftPlane.normal * customOffset;
         //Gizmos.DrawLineList(new Vector3[]
@@ -655,8 +653,6 @@ public class CutFrustum : MonoBehaviour
         Gizmos.DrawLine(leftUp + (captureCamera.transform.forward * 1.0f), rightUp + (captureCamera.transform.forward * 1.0f));
         Gizmos.DrawLine(leftUp + (captureCamera.transform.forward * 1.0f), leftDown + (captureCamera.transform.forward * 1.0f));
         Gizmos.DrawLine(rightUp + (captureCamera.transform.forward * 1.0f), rightDown + (captureCamera.transform.forward * 1.0f));
-
-
     }
 
 
@@ -664,7 +660,7 @@ public class CutFrustum : MonoBehaviour
 
 public class PolaroidFilm
 {
-    private List<GameObject> placeHolder;//½ºÆ¬¿Õ¼äÖĞµÄÎïÌå
+    private List<GameObject> placeHolder;//èƒ¶ç‰‡ç©ºé—´ä¸­çš„ç‰©ä½“
     private SceneReference currentSceneRef;
 
     public PolaroidFilm(List<GameObject> aims, Transform parent, SceneReference currentSceneRef)
@@ -688,10 +684,8 @@ public class PolaroidFilm
     {
         Scene aimScene = SceneManager.GetSceneByName(currentSceneRef.sceneName);
 
+        GameObject aimLevel = aimScene.GetRootGameObjects()[1];//!!!éœ€è¦æˆ‘ä»¬çš„åœºæ™¯ä¸­ç¬¬äºŒä¸ªæ ¹ä¸€å®šæ˜¯Level
         
-        GameObject aimLevel = aimScene.GetRootGameObjects()[1];//ĞèÒªÎÒÃÇµÄ³¡¾°ÖĞµÚ¶ş¸ö¸ùÒ»¶¨ÊÇLevel
-        
-
         foreach (var aim in placeHolder)
         {
             Debug.Log(currentSceneRef.sceneName);
@@ -701,6 +695,5 @@ public class PolaroidFilm
             aim.layer = LayerMask.NameToLayer(currentSceneRef.sceneName);
             aim.SetActive(true);
         }
-
     }
 }

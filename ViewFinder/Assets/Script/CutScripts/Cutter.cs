@@ -1,11 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
-As mentioned in the video, this is a custom implementation based on Kristin Lague's project. 
-If you've downloaded this repo for the cutting part, I suggest starting with this repo: https://github.com/KristinLague/Mesh-Cutting
-and this video: https://www.youtube.com/watch?v=1UsuZsaUUng&t=7s 
-*/
 
 public class Cutter : MonoBehaviour
 {
@@ -32,21 +27,21 @@ public class Cutter : MonoBehaviour
         GeneratedMesh leftMesh = new GeneratedMesh();
         GeneratedMesh rightMesh = new GeneratedMesh();
         
-        //Ö»ÇĞ¸îÍø¸ñ
+        //åªåˆ‡å‰²ç½‘æ ¼
         SeparateMeshes(leftMesh,rightMesh,cutPlane,addedVertices);
 
-        //·ìºÏÇĞ¿Ú
+        //ç¼åˆåˆ‡å£
         FillCut(addedVertices, cutPlane, leftMesh, rightMesh);
 
         Mesh finishedLeftMesh = leftMesh.GetGeneratedMesh();
         Mesh finishedRightMesh = rightMesh.GetGeneratedMesh();
 
-        //É¾³ıÔ­ÓĞÅö×²
+        //åˆ é™¤åŸæœ‰ç¢°æ’
         var originalCols = originalGameObject.GetComponents<Collider>();
         foreach (var col in originalCols)
             Destroy(col);
 
-        //ÉèÖÃÍø¸ñ²¢Ìí¼ÓĞÂÅö×²
+        //è®¾ç½®ç½‘æ ¼å¹¶æ·»åŠ æ–°ç¢°æ’
         originalGameObject.GetComponent<MeshFilter>().mesh = finishedLeftMesh;
         var collider = originalGameObject.AddComponent<MeshCollider>();
         collider.sharedMesh = finishedLeftMesh;
@@ -63,7 +58,7 @@ public class Cutter : MonoBehaviour
         }
         originalGameObject.GetComponent<MeshRenderer>().materials = mats;
 
-        //ÇĞ¸î²úÉúµÄÁíÒ»¸ö²¿·Ö£¬ËüµÄÉúÃüÖÜÆÚ¹é³¡¾°Ëù¹Ü¿Ø
+        //åˆ‡å‰²äº§ç”Ÿçš„å¦ä¸€ä¸ªéƒ¨åˆ†ï¼Œå®ƒçš„ç”Ÿå‘½å‘¨æœŸå½’åœºæ™¯æ‰€ç®¡æ§
         GameObject right = new GameObject();
         right.transform.position = originalGameObject.transform.position;
         right.transform.rotation = originalGameObject.transform.rotation;
@@ -95,7 +90,7 @@ public class Cutter : MonoBehaviour
         isBusy = false;
 
         //right.layer = LayerMask.NameToLayer("Cuttable");
-        //ÕâÀïÒ»µãµãĞ¡Ä§¸Ä
+        //è¿™é‡Œä¸€ç‚¹ç‚¹å°é­”æ”¹
         right.layer = originalGameObject.layer;
         right.tag = originalGameObject.tag;
 
@@ -108,7 +103,7 @@ public class Cutter : MonoBehaviour
     /// <summary>
     /// Iterates over all the triangles of all the submeshes of the original mesh to separate the left
     /// and right side of the plane into individual meshes.
-    /// Öğ×ÓÍø¸ñ£¬ÖğÈı½ÇÃæ×ö·Ö¸î´¦Àí
+    /// é€å­ç½‘æ ¼ï¼Œé€ä¸‰è§’é¢åšåˆ†å‰²å¤„ç†
     /// </summary>
     /// <param name="leftMesh"></param>
     /// <param name="rightMesh"></param>
@@ -203,7 +198,7 @@ public class Cutter : MonoBehaviour
     private static void CutTriangle(Plane plane,MeshTriangle triangle, bool triangleALeftSide, bool triangleBLeftSide, bool triangleCLeftSide,
     GeneratedMesh leftMesh, GeneratedMesh rightMesh, List<Vector3> addedVertices)
     {
-        //×ßµ½Õâ¸öº¯Êı£¬ËµÃ÷Èı½ÇµÄÈı¸ö¶¥µãÔÚÆ½ÃæÁ½²à¶¼´æÔÚ
+        //èµ°åˆ°è¿™ä¸ªå‡½æ•°ï¼Œè¯´æ˜ä¸‰è§’çš„ä¸‰ä¸ªé¡¶ç‚¹åœ¨å¹³é¢ä¸¤ä¾§éƒ½å­˜åœ¨
 
 
         List<bool> leftSide = new List<bool>();
@@ -211,7 +206,7 @@ public class Cutter : MonoBehaviour
         leftSide.Add(triangleBLeftSide);
         leftSide.Add(triangleCLeftSide);
 
-        //¶ÔÈı½ÇµÄ¶¥µã½øĞĞ²ğ·Ö£¬·Öµ½×ó²àºÍÓÒ²àµÄ¶¥µã¶¼²»¿ÉÄÜ³¬¹ı2
+        //å¯¹ä¸‰è§’çš„é¡¶ç‚¹è¿›è¡Œæ‹†åˆ†ï¼Œåˆ†åˆ°å·¦ä¾§å’Œå³ä¾§çš„é¡¶ç‚¹éƒ½ä¸å¯èƒ½è¶…è¿‡2
         MeshTriangle leftMeshTriangle = new MeshTriangle(new Vector3[2],new Vector3[2],new Vector2[2],triangle.SubmeshIndex);
         MeshTriangle rightMeshTriangle = new MeshTriangle(new Vector3[2], new Vector3[2], new Vector2[2], triangle.SubmeshIndex);
 
@@ -224,7 +219,7 @@ public class Cutter : MonoBehaviour
             {
                 if (!left)
                 {
-                    //µÚÒ»´Î×°Ìî
+                    //ç¬¬ä¸€æ¬¡è£…å¡«
                     left = true;
 
                     leftMeshTriangle.Vertices[0] = triangle.Vertices[i];
@@ -238,7 +233,7 @@ public class Cutter : MonoBehaviour
                 }
                 else
                 {
-                    //µÚ¶ş´Î×°Ìî
+                    //ç¬¬äºŒæ¬¡è£…å¡«
                     leftMeshTriangle.Vertices[1] = triangle.Vertices[i];
                     leftMeshTriangle.Normals[1] = triangle.Normals[i];
                     leftMeshTriangle.UVs[1] = triangle.UVs[i];
@@ -269,19 +264,19 @@ public class Cutter : MonoBehaviour
             }
         }
 
-        float normalizedDistance;//±ÈÀı
+        float normalizedDistance;//æ¯”ä¾‹
         float distance;
         plane.Raycast(new Ray(leftMeshTriangle.Vertices[0], (rightMeshTriangle.Vertices[0] - leftMeshTriangle.Vertices[0]).normalized), out distance);
 
-        //¶Ïµã×ø±ê
+        //æ–­ç‚¹åæ ‡
         normalizedDistance = distance / (rightMeshTriangle.Vertices[0] - leftMeshTriangle.Vertices[0]).magnitude;
         Vector3 vertLeft = Vector3.Lerp(leftMeshTriangle.Vertices[0], rightMeshTriangle.Vertices[0], normalizedDistance);
         addedVertices.Add(vertLeft);
-        //¶Ïµã·¨ÏßºÍUV
+        //æ–­ç‚¹æ³•çº¿å’ŒUV
         Vector3 normalLeft = Vector3.Lerp(leftMeshTriangle.Normals[0], rightMeshTriangle.Normals[0], normalizedDistance);
         Vector2 uvLeft = Vector2.Lerp(leftMeshTriangle.UVs[0], rightMeshTriangle.UVs[0], normalizedDistance);
         
-        //Í¬ÉÏ
+        //åŒä¸Š
         plane.Raycast(new Ray(leftMeshTriangle.Vertices[1], (rightMeshTriangle.Vertices[1] - leftMeshTriangle.Vertices[1]).normalized), out distance);
 
         normalizedDistance = distance / (rightMeshTriangle.Vertices[1] - leftMeshTriangle.Vertices[1]).magnitude;
@@ -292,11 +287,11 @@ public class Cutter : MonoBehaviour
         Vector2 uvRight = Vector2.Lerp(leftMeshTriangle.UVs[1], rightMeshTriangle.UVs[1], normalizedDistance);
 
 
-        //Ö®ºóÕâÀïÒ»¹²×öÁËËÄ´Î´¦Àí
-        //ÏÈ³¢ÊÔ½«×ó²à²ğÎªÁ½¸öÈı½Ç£¬²¢Éú³ÉÍø¸ñÈı½Ç£¬Ìí¼Óµ½¶ÔÓ¦Íø¸ñÖĞ
-        //ÔÙ³¢ÊÔ½«ÓÒ²à²ğÎªÁ½¸öÈı½Ç£¬²¢Éú³ÉÍø¸ñÈı½Ç£¬Ìí¼Óµ½¶ÔÓ¦Íø¸ñÖĞ
-        //¹ı³ÌÖĞ»á»ùÓÚ·¨Ïß¶ÔÈı½Ç½øĞĞ·­×ª£¬¸Ã¼ì²â¹«Ê½µÄÁíÒ»¸ö×óÓÒ¾ÍÊÇÅÅ³ı·Çµ«Èı½ÇÃæ£¬ÒòÎª·ÇÈı½ÇÃæÔËĞĞ¸Ã¹«Ê½»á±¨´í
-        //Í¬Ê±ËÄ¸öÖĞÒ²±ØÈ»ÓĞÒ»¸ö²»ÊÇÈı½ÇĞÎ
+        //ä¹‹åè¿™é‡Œä¸€å…±åšäº†å››æ¬¡å¤„ç†
+        //å…ˆå°è¯•å°†å·¦ä¾§æ‹†ä¸ºä¸¤ä¸ªä¸‰è§’ï¼Œå¹¶ç”Ÿæˆç½‘æ ¼ä¸‰è§’ï¼Œæ·»åŠ åˆ°å¯¹åº”ç½‘æ ¼ä¸­
+        //å†å°è¯•å°†å³ä¾§æ‹†ä¸ºä¸¤ä¸ªä¸‰è§’ï¼Œå¹¶ç”Ÿæˆç½‘æ ¼ä¸‰è§’ï¼Œæ·»åŠ åˆ°å¯¹åº”ç½‘æ ¼ä¸­
+        //è¿‡ç¨‹ä¸­ä¼šåŸºäºæ³•çº¿å¯¹ä¸‰è§’è¿›è¡Œç¿»è½¬ï¼Œè¯¥æ£€æµ‹å…¬å¼çš„å¦ä¸€ä¸ªå·¦å³å°±æ˜¯æ’é™¤éä½†ä¸‰è§’é¢ï¼Œå› ä¸ºéä¸‰è§’é¢è¿è¡Œè¯¥å…¬å¼ä¼šæŠ¥é”™
+        //åŒæ—¶å››ä¸ªä¸­ä¹Ÿå¿…ç„¶æœ‰ä¸€ä¸ªä¸æ˜¯ä¸‰è§’å½¢
 
         //TESTING OUR FIRST TRIANGLE
         MeshTriangle currentTriangle;
@@ -406,14 +401,14 @@ public class Cutter : MonoBehaviour
         bool isDone = false;
         while(!isDone)
         {
-            isDone = true;//¼Ù¶¨ÒÑ¾­ËùÓĞµÄ¶ÏµãÒÑ¾­´®ÆğÀ´
+            isDone = true;//å‡å®šå·²ç»æ‰€æœ‰çš„æ–­ç‚¹å·²ç»ä¸²èµ·æ¥
 
             for (int i = 0; i < _addedVertices.Count; i+=2)
             {
-                //µÚÒ»¸öÌõ¼şÊÇÎªÁËÏÉ½ç£¬µÚ¶ş¸öÌõ¼şÊÇÎªÁËÈ·±£ÕâÊÇÒ»¸öĞÂÁ´
-                //×ĞÏ¸½âÊÍÒ»ÏÂaddedVerticesÔÚÌî³äÊ±Ò»Ö±ÊÇÒ»¶ÔÒ»¶Ô¼ÓµÄ£¬ÇÒËüÃÇÎŞ½µÖØ£¬Äã¿ÉÒÔ°ÑËüÃÇÏëÏó³É³µÂÖµÄÁ´Ìõ£¬Ìí¼ÓÊ±µÄÃ»Ò»¸ö¶Ô¶¼ÊÇÒ»¸ö¹Ø½ÚÁã¼ş
-                //ÒÅº¶µÄÊÇ£¬addedVertices»¹²»ÊÇÁ´Ìõ£¬Ö»ÊÇÒ»¶ÑÉ¢ÂÒµÄÁã¼ş£¬ÎÒÃÇÒª½«Æä´®ÆğÀ´£¨Ò²¾ÍÊÇ½«ÇĞÃæµÄÄÇ¸öÉË¿Ú·ìÆğÀ´£©
-                //ËùÒÔ½ÓÏÂÀ´¾ÍÊÇÃ¿´ÎÕÒÒ»¸ö¼¸ºÎÉÏ¿ÉÒÔÆ´½ÓÉÏµÄÏÂÒ»¸ö¹Ø»úÁã¼ş£¬¾ÍÕâÃ´Ò»Ö±´®ÏÂÈ¥£¨¿´ÍêºóÄãÒ²»áÒâÊ¶µ½ÕâÀï¿ÉÒÔµİ¹é£¬¶ø²»ÊÇwhile£¬²»¹ıÃ»Ê²Ã´´óµÄÇø±ğ£©
+                //ç¬¬ä¸€ä¸ªæ¡ä»¶æ˜¯ä¸ºäº†è¡”æ¥ï¼Œç¬¬äºŒä¸ªæ¡ä»¶æ˜¯ä¸ºäº†ç¡®ä¿è¿™æ˜¯ä¸€ä¸ªæ–°é“¾
+                //ä»”ç»†è§£é‡Šä¸€ä¸‹addedVerticesåœ¨å¡«å……æ—¶ä¸€ç›´æ˜¯ä¸€å¯¹ä¸€å¯¹åŠ çš„ï¼Œä¸”å®ƒä»¬æ— é™é‡ï¼Œä½ å¯ä»¥æŠŠå®ƒä»¬æƒ³è±¡æˆè½¦è½®çš„é“¾æ¡ï¼Œæ·»åŠ æ—¶çš„æ²¡ä¸€ä¸ªå¯¹éƒ½æ˜¯ä¸€ä¸ªå…³èŠ‚é›¶ä»¶
+                //é—æ†¾çš„æ˜¯ï¼ŒaddedVerticesè¿˜ä¸æ˜¯é“¾æ¡ï¼Œåªæ˜¯ä¸€å †æ•£ä¹±çš„é›¶ä»¶ï¼Œæˆ‘ä»¬è¦å°†å…¶ä¸²èµ·æ¥ï¼ˆä¹Ÿå°±æ˜¯å°†åˆ‡é¢çš„é‚£ä¸ªä¼¤å£ç¼èµ·æ¥ï¼‰
+                //æ‰€ä»¥æ¥ä¸‹æ¥å°±æ˜¯æ¯æ¬¡æ‰¾ä¸€ä¸ªå‡ ä½•ä¸Šå¯ä»¥æ‹¼æ¥ä¸Šçš„ä¸‹ä¸€ä¸ªå…³æœºé›¶ä»¶ï¼Œå°±è¿™ä¹ˆä¸€ç›´ä¸²ä¸‹å»ï¼ˆè¿™é‡Œå¯ä»¥é€’å½’ï¼Œè€Œä¸æ˜¯whileï¼Œä¸è¿‡æ²¡ä»€ä¹ˆå¤§çš„åŒºåˆ«ï¼‰
                 if (_addedVertices[i] == _polygone[_polygone.Count - 1] && !_vertices.Contains(_addedVertices[i + 1]))
                 {
                     isDone = false;
@@ -432,7 +427,6 @@ public class Cutter : MonoBehaviour
 
     private static void Fill(List<Vector3> _vertices, Plane _plane, GeneratedMesh _leftMesh, GeneratedMesh _rightMesh)
     {
-        //Firstly we need the center we do this by adding up all the vertices and then calculating the average
         Vector3 centerPosition = Vector3.zero;
         for (int i = 0; i < _vertices.Count; i++)
         {
@@ -440,8 +434,6 @@ public class Cutter : MonoBehaviour
         }
         centerPosition /= _vertices.Count;
 
-        //We now need an Upward Axis we use the plane we cut the mesh with for that
-        //ÕâÊÇÔÚ¸ÉÂï£¿
         Vector3 up = new Vector3()
         {
             x = _plane.normal.x,
@@ -456,10 +448,9 @@ public class Cutter : MonoBehaviour
         Vector2 uv2 = Vector2.zero;
 
 
-        //Á½¸ö¶ÏµãºÍÒ»¸öÖĞµç¹¹³ÉÒ»¸öÈı½ÇĞÎ
+        //ä¸¤ä¸ªæ–­ç‚¹å’Œä¸€ä¸ªä¸­ç‚¹æ„æˆä¸€ä¸ªä¸‰è§’å½¢
         for (int i = 0; i < _vertices.Count; i++)
         {
-            //ÕâÀïÊÇ¼Ù¶¨ÖĞĞÄµÄuvÊÇ0.5£¬ 0.5£¬È»ºó¡£¡£¡£ÎÒ¾õµÃÕâÀïËã´íÁË
             displacement = _vertices[i] - centerPosition;
             uv1 = new Vector2()
             {
@@ -490,7 +481,7 @@ public class Cutter : MonoBehaviour
 
 
 
-            normals = new[] { _plane.normal, _plane.normal, _plane.normal };//µ÷Õû·¨Ïß
+            normals = new[] { _plane.normal, _plane.normal, _plane.normal };//è°ƒæ•´æ³•çº¿ä¸ºåˆ‡é¢çš„æ³•çº¿
             currentTriangle = new MeshTriangle(vertices, normals, uvs, originalMesh.subMeshCount + 1);
 
             if(Vector3.Dot(Vector3.Cross(vertices[1] - vertices[0],vertices[2] - vertices[0]),normals[0]) < 0)

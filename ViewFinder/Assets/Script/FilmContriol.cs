@@ -7,16 +7,16 @@ using DG.Tweening;
 using UnityEngine.Animations;
 using UnityEngine.InputSystem.Controls;
 
-//½ºÆ¬²Ù¿ØÀà
+//èƒ¶ç‰‡æ“æ§ç±»
 public class FilmContriol : MonoBehaviour
 {
 
-    public Transform LookInFilmPoint;//¹Û²ìÏàÆ¬Ê±µÄÎ»ÖÃ
-    public Transform HandheldFilmPoint;//filmÊÖ³Öµã
-    public Transform FrustumPoint;//ÇĞ¸îÊÓ×¶µÄ¶¥µã
+    public Transform LookInFilmPoint;//è§‚å¯Ÿç›¸ç‰‡æ—¶çš„ä½ç½®
+    public Transform HandheldFilmPoint;//filmæ‰‹æŒç‚¹
+    public Transform FrustumPoint;//åˆ‡å‰²è§†é”¥çš„é¡¶ç‚¹
     
 
-    public float rotateSpead = -10.0f;//Ğı×ªËÙ¶È
+    public float rotateSpead = -10.0f;//æ—‹è½¬é€Ÿåº¦
 
     public PlayerInput polaroidInput;
     public PlayerInput thisInput;
@@ -28,7 +28,7 @@ public class FilmContriol : MonoBehaviour
         this.GetComponent<PlayerInput>().actions.Disable();
     }
 
-    //¹Û²ìÕÕÆ¬Ê±µÄ»Øµ÷
+    //è§‚å¯Ÿç…§ç‰‡æ—¶çš„å›è°ƒ
     public void LookInFilm(InputAction.CallbackContext callbackContext)
     {
 
@@ -38,7 +38,7 @@ public class FilmContriol : MonoBehaviour
 
             this.GetComponentInParent<PlayController>().isSwitchScene = true;
 
-            //ÒÆ¶¯µ½Ö¸¶¨Î»ÖÃ
+            //ç§»åŠ¨åˆ°æŒ‡å®šä½ç½®
             this.transform.DOMove(LookInFilmPoint.position, 1.2f, false);
             this.transform.DORotate(LookInFilmPoint.rotation.eulerAngles, 1.2f, RotateMode.Fast).OnComplete(() => this.GetComponentInParent<PlayController>().PlayerState(true));
 
@@ -50,7 +50,7 @@ public class FilmContriol : MonoBehaviour
     }
 
 
-    //ÒÆ¿ªÕÕÆ¬Ê±µÄ»Øµ÷
+    //ç§»å¼€ç…§ç‰‡æ—¶çš„å›è°ƒ
     public void LookOutFilm(InputAction.CallbackContext callbackContext)
     {
         int x = 0;
@@ -78,14 +78,14 @@ public class FilmContriol : MonoBehaviour
 
     }
 
-    //Ğı×ªÕÕÆ¬Ê±µÄ»Øµ÷
+    //æ—‹è½¬ç…§ç‰‡æ—¶çš„å›è°ƒ
     public void RotateFilm(InputAction.CallbackContext callbackContext)
     {
         Debug.Log("RotateFilm");
 
         float dir = callbackContext.ReadValue<float>();
         if( dir > 0 )
-            //ÈÆÒ»¸öÖá£¨¸ù¾İµÚÈı¸ö²ÎÊı¾ö¶¨ÊÇÔÚ¾Ö²¿¿Õ¼äÖá»¹ÊÇÊÀ½ç¿Õ¼äÖá£©Ğı×ªÒ»¶¨½Ç¶È
+            //ç»•ä¸€ä¸ªè½´ï¼ˆæ ¹æ®ç¬¬ä¸‰ä¸ªå‚æ•°å†³å®šæ˜¯åœ¨å±€éƒ¨ç©ºé—´è½´è¿˜æ˜¯ä¸–ç•Œç©ºé—´è½´ï¼‰æ—‹è½¬ä¸€å®šè§’åº¦
             FrustumPoint.Rotate(Vector3.forward, rotateSpead * Time.deltaTime, Space.Self);
         else if(dir < 0)
             FrustumPoint.Rotate(Vector3.forward, -1 * rotateSpead * Time.deltaTime, Space.Self);
@@ -93,7 +93,7 @@ public class FilmContriol : MonoBehaviour
     }
 
 
-    //Ê¹ÓÃÕÕÆ¬Ê±µÄ»Øµ÷
+    //ä½¿ç”¨ç…§ç‰‡æ—¶çš„å›è°ƒ
     public void UseFilm(InputAction.CallbackContext callbackContext)
     {
 
@@ -101,9 +101,9 @@ public class FilmContriol : MonoBehaviour
 
         if (this.name == "Film(Clone)")
         {
-            this.cutHolder?.Invoke(false);//µ÷ÓÃÇĞ¸î·½·¨
+            this.cutHolder?.Invoke(false);//è°ƒç”¨åˆ‡å‰²æ–¹æ³•
 
-            //ÔÚPolaroidÀàÖĞÎÒ²ûÊöÁËµ±ÏÂÎÒÔÚ²Ù×÷ÇĞ»»ÖĞÓöµ½µÄÎÊÌâ£¬ÕâÊÇÄ¿Ç°¿ÉĞĞµÄ·½°¸
+            
             polaroidInput.actions.Enable();
             this.GetComponent<PlayerInput>().actions.Disable();
 
